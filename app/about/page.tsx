@@ -191,7 +191,7 @@ const skills = [
   { name: "Matlab", level: 50 },
   { name: "Next.js", level: 60 },
   { name: "SQL", level: 55 },
-  { name: "C++", level: 60 },
+  { name: "C++", level: 80 },
   { name: "Python", level: 75 },
 ]
 

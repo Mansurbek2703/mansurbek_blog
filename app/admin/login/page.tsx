@@ -86,7 +86,7 @@ export default function AdminLogin() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="mansurbekqazaqov27@gmail.com"
+                    placeholder="something very difficult"
                     className="pl-10"
                     required
                   />
@@ -124,9 +124,9 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Test uchun:</p>
-              <p className="text-xs text-gray-500">Email: mansurbekqazaqov27@gmail.com</p>
-              <p className="text-xs text-gray-500">Parol: admin123</p>
+              <p className="text-sm text-gray-600 mb-2">blogalwaysinadvance</p>
+              <p className="text-xs text-gray-500">ifyoutrytohackyouwillloseyourself</p>
+              <p className="text-xs text-gray-500">incorrectattemptsinlog.Iwillfindyou!!!</p>
             </div>
           </CardContent>
         </Card>
