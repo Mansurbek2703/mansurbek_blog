@@ -540,22 +540,24 @@ export default function HomePage() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-blue-200/50 dark:border-blue-700/50 shadow-xl"
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-2 md:px-4 py-3 md:py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
               <motion.div
                 whileHover={{ rotate: 360, scale: 1.1 }}
                 transition={{ duration: 0.6 }}
-                className="w-12 h-12 bg-gradient-to-r from-blue-500 via-cyan-500 to-green-500 rounded-full flex items-center justify-center shadow-lg"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-r from-blue-500 via-cyan-500 to-green-500 rounded-full flex items-center justify-center shadow-lg"
               >
-                <span className="text-white font-bold text-xl">M</span>
+                <span className="text-white font-bold text-sm md:text-xl">M</span>
               </motion.div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                <h1 className="text-base sm:text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                   Mansurbek Qazaqov
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t("Shaxsiy blog", "Personal blog")}</p>
+                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+                  {t("Shaxsiy blog", "Personal blog")}
+                </p>
               </div>
             </Link>
 
@@ -637,7 +639,7 @@ export default function HomePage() {
             </motion.nav>
 
             {/* Controls */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {/* Enhanced Search */}
               <motion.div
                 className="relative hidden lg:block"
@@ -774,10 +776,10 @@ export default function HomePage() {
                 onClick={toggleLanguage}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-800 dark:to-cyan-800 text-blue-700 dark:text-blue-300 hover:from-blue-200 hover:to-cyan-200 dark:hover:from-blue-700 dark:hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="flex items-center space-x-1 px-2 py-1.5 md:px-3 md:py-2 rounded-lg md:rounded-xl bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-800 dark:to-cyan-800 text-blue-700 dark:text-blue-300 hover:from-blue-200 hover:to-cyan-200 dark:hover:from-blue-700 dark:hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <Globe className="w-4 h-4" />
-                <span className="text-sm font-semibold">{language.toUpperCase()}</span>
+                <Globe className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="text-xs md:text-sm font-semibold">{language.toUpperCase()}</span>
               </motion.button>
 
               {/* Dark Mode Toggle */}
@@ -785,9 +787,9 @@ export default function HomePage() {
                 onClick={toggleDarkMode}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-800 dark:to-emerald-800 text-green-700 dark:text-green-300 hover:from-green-200 hover:to-emerald-200 dark:hover:from-green-700 dark:hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="p-2 md:p-3 rounded-lg md:rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-800 dark:to-emerald-800 text-green-700 dark:text-green-300 hover:from-green-200 hover:to-emerald-200 dark:hover:from-green-700 dark:hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                {darkMode ? <Sun className="w-4 h-4 md:w-5 md:h-5" /> : <Moon className="w-4 h-4 md:w-5 md:h-5" />}
               </motion.button>
 
               {/* Mobile Menu Button */}
@@ -795,7 +797,7 @@ export default function HomePage() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="md:hidden p-3 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 shadow-lg"
+                className="md:hidden p-2 rounded-lg bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 shadow-lg"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.button>
@@ -887,10 +889,7 @@ export default function HomePage() {
       </motion.header>
 
       {/* Hero Section */}
-      <motion.section
-        {...fadeInUp}
-        className="relative py-20 bg-gradient-to-br from-blue-100/50 via-cyan-100/50 to-green-100/50 dark:from-blue-900/30 dark:via-cyan-900/30 dark:to-green-900/30 backdrop-blur-sm"
-      >
+      <motion.section className="relative py-8 md:py-20 bg-gradient-to-br from-blue-100/50 via-cyan-100/50 to-green-100/50 dark:from-blue-900/30 dark:via-cyan-900/30 dark:to-green-900/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center max-w-6xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -898,7 +897,7 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-8"
           >
-            <Avatar className="w-32 h-32 mx-auto mb-6 ring-4 ring-blue-500 ring-offset-4 ring-offset-white dark:ring-offset-gray-900 shadow-2xl">
+            <Avatar className="w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 mx-auto mb-6 ring-2 md:ring-4 ring-blue-500 ring-offset-2 md:ring-offset-4 ring-offset-white dark:ring-offset-gray-900 shadow-2xl">
               <AvatarImage src="/men.jpg" alt="Mansurbek Qazaqov" />
               <AvatarFallback className="bg-gradient-to-r from-blue-500 to-green-500 text-white text-4xl font-bold">
                 M
@@ -910,7 +909,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-green-600 bg-clip-text text-transparent mb-6 drop-shadow-lg"
+            className="text-2xl sm:text-3xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-green-600 bg-clip-text text-transparent mb-6 drop-shadow-lg"
           >
             {t("Salom, men Mansurbek", "Hello, I'm Mansurbek")}
           </motion.h1>
@@ -919,7 +918,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed max-w-4xl mx-auto"
+            className="text-sm sm:text-base md:text-2xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed max-w-4xl mx-auto"
           >
             {t(
               "Texnologiya, ta'lim va hayot haqida yozaman. Mening maqolalarim orqali yangi bilimlar oling va o'z tajribalaringiz bilan bo'lishing.",
@@ -935,8 +934,8 @@ export default function HomePage() {
           >
             <Link href="/categories">
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Button className="px-8 py-4 text-lg bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-xl rounded-xl">
-                  <BookOpen className="w-5 h-5 mr-3" />
+                <Button className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 text-base md:text-lg bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-xl rounded-xl">
+                  <BookOpen className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                   {t("Maqolalarni ko'rish", "View Articles")}
                 </Button>
               </motion.div>
@@ -946,9 +945,9 @@ export default function HomePage() {
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
-                  className="px-8 py-4 text-lg border-2 border-green-400 text-green-600 hover:bg-green-50 dark:hover:bg-green-900 shadow-xl rounded-xl bg-transparent"
+                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 text-base md:text-lg border-2 border-green-400 text-green-600 hover:bg-green-50 dark:hover:bg-green-900 shadow-xl rounded-xl bg-transparent"
                 >
-                  <User className="w-5 h-5 mr-3" />
+                  <User className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                   {t("Men haqimda", "About Me")}
                 </Button>
               </motion.div>
@@ -958,14 +957,14 @@ export default function HomePage() {
       </motion.section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-16 relative z-10">
-        <div className="grid lg:grid-cols-4 gap-12">
+      <main className="container mx-auto px-2 md:px-4 py-8 md:py-16 relative z-10">
+        <div className="grid lg:grid-cols-4 gap-6 lg:gap-12">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
             {/* Featured Posts Section */}
             <motion.section {...fadeInUp} className="mb-16">
               <div className="flex items-center justify-between mb-10">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                <h2 className="text-xl sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                   {t("So'nggi maqolalar", "Latest Articles")}
                 </h2>
                 <Link href="/categories">
@@ -1056,7 +1055,7 @@ export default function HomePage() {
                               </div>
                             </div>
 
-                            <CardContent className="p-6">
+                            <CardContent className="p-3 sm:p-4 md:p-6">
                               <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400 mb-4">
                                 <span className="flex items-center">
                                   <Calendar className="w-4 h-4 mr-2" />
@@ -1111,7 +1110,7 @@ export default function HomePage() {
 
             {/* Categories Section */}
             <motion.section {...fadeInUp} className="mb-16">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-10">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-10">
                 {t("Kategoriyalar", "Categories")}
               </h2>
 
@@ -1162,7 +1161,7 @@ export default function HomePage() {
               {/* Popular Posts */}
               <motion.div {...fadeInUp}>
                 <Card className="shadow-xl border-2 border-blue-200 dark:border-blue-700 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3 sm:p-4 md:p-6">
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-6 flex items-center">
                       <TrendingUp className="w-6 h-6 mr-3 text-blue-500" />
                       {t("Mashhur maqolalar", "Popular Articles")}
@@ -1204,7 +1203,7 @@ export default function HomePage() {
               {/* Newsletter Subscription */}
               <motion.div {...fadeInUp}>
                 <Card className="shadow-xl border-2 border-green-200 dark:border-green-700 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 backdrop-blur-sm">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3 sm:p-4 md:p-6">
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4 flex items-center">
                       <Mail className="w-6 h-6 mr-3 text-green-500" />
                       {t("Newsletter", "Newsletter")}
@@ -1283,7 +1282,7 @@ export default function HomePage() {
               {/* About Card */}
               <motion.div {...fadeInUp}>
                 <Card className="shadow-xl border-2 border-purple-200 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 backdrop-blur-sm">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3 sm:p-4 md:p-6">
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
                       {t("Men haqimda", "About Me")}
                     </h3>
