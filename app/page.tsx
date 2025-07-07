@@ -1185,7 +1185,7 @@ export default function HomePage() {
 
                 <p className="text-gray-300 leading-relaxed mb-6 text-lg">
                   {t(
-                    "Texnologiya, ta'lim va hayot haqida maqolalar. Bilimlarni bo'lishish va yangi narsalarni o'rganish.",
+                    "Texnologiya va ta'lim . Bilimlarni bo'lishish va yangi narsalarni o'rganish.",
                     "Articles about technology, education, and life. Sharing knowledge and learning new things.",
                   )}
                 </p>
