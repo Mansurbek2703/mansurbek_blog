@@ -273,7 +273,7 @@ export default function ContactPage() {
                   <span className="text-white font-bold text-lg">M</span>
                 </motion.div>
                 <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                  Mansurbek Qazaqov
+
                 </span>
               </Link>
             </div>

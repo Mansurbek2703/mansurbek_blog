@@ -794,8 +794,8 @@ export default function HomePage() {
             className="text-sm sm:text-base md:text-2xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed max-w-4xl mx-auto"
           >
             {t(
-              "Texnologiya, ta'lim va hayot haqida yozaman. Mening maqolalarim orqali yangi bilimlar oling va o'z tajribalaringiz bilan bo'lishing.",
-              "I write about technology, education, and life. Gain new knowledge through my articles and share your experiences.",
+              "Texnologiya, ta'lim va umumiy mavzudagi postlar. Yangi bilimlar oling va o'z tajribalaringiz bilan bo'lishing.",
+              "I write about technology, education, and life. Gain new knowledge and share your experiences.",
             )}
           </motion.p>
 
