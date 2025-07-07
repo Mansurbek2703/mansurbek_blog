@@ -8,13 +8,13 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Mansurbek Qazaqov - Shaxsiy Blog",
   description:
-    "IT, sayohat va hayot haqida maqolalar. Bilim almashish va tajriba bo'lishish uchun yaratilgan platforma.",
+    "IT, texnologiya va umumiy mavzudagi maqolalar. Bilim almashish va tajriba bo'lishish uchun yaratilgan platforma.",
   keywords: "IT, blog, sayohat, texnologiya, dasturlash, Mansurbek Qazaqov",
   authors: [{ name: "Mansurbek Qazaqov" }],
   openGraph: {
     title: "Mansurbek Qazaqov - Shaxsiy Blog",
-    description: "IT, sayohat va hayot haqida maqolalar",
-    url: "https://mansurbekqazaqov.uz",
+    description: "IT, texnologiya va umumiy mavzudagi maqolalar💻💡📈",
+    url: "https://mansurbek.info",
     siteName: "Mansurbek Qazaqov Blog",
     images: [
       {
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Mansurbek Qazaqov - Shaxsiy Blog",
-    description: "IT, sayohat va hayot haqida maqolalar",
+    description: "IT, texnologiya va umumiy mavzudagi maqolalar💻💡📈",
     images: ["/og-image.jpg"],
   },
   robots: {
