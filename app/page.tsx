@@ -116,7 +116,7 @@ interface Post {
   category_name: string
   category_name_en: string
   featured_image?: string
-  youtube_url?: string // YouTube URL qo'shildi
+  youtube_url?: string
   created_at: string
   views?: number
   comments_count?: number
@@ -146,10 +146,10 @@ interface SearchResult {
 }
 
 export default function HomePage() {
-  // 1. Birinchi navbatda global settings hook
+  // Global settings hook
   const { language, darkMode, isLoaded, toggleLanguage, toggleDarkMode, t } = useGlobalSettings()
 
-  // 2. Keyin barcha boshqa state lar
+  // State management
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchFocused, setSearchFocused] = useState(false)
@@ -163,7 +163,6 @@ export default function HomePage() {
   const [subscribing, setSubscribing] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
-  // 3. Barcha useEffect lar
   // Fetch posts
   const fetchPosts = async () => {
     setLoading(true)
@@ -232,31 +231,20 @@ export default function HomePage() {
     fetchCategories()
   }, [])
 
-  // 4. Barcha helper function lar
-  // Get featured posts (latest posts)
+  // Helper functions
   const featuredPosts = useMemo(() => {
+    if (!posts || !Array.isArray(posts)) return []
     return posts.slice(0, 6)
   }, [posts])
 
-  // Get popular posts (sorted by views)
   const popularPosts = useMemo(() => {
+    if (!posts || !Array.isArray(posts)) return []
     return [...posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5)
   }, [posts])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString(language === "uz" ? "uz-UZ" : "en-US")
-  }
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleString(language === "uz" ? "uz-UZ" : "en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
   }
 
   const getIconComponent = (iconName: string) => {
@@ -269,8 +257,7 @@ export default function HomePage() {
     return icons[iconName] || BookOpen
   }
 
-  // 5. Event handler lar
-  // Search handler
+  // Event handlers
   const handleSearch = async (query: string) => {
     if (query.length < 2) {
       setSearchResults([])
@@ -289,8 +276,13 @@ export default function HomePage() {
       // Fallback search in local posts
       const filtered = posts
         .filter((post) => {
-          const title = (language === "uz" ? post.title_uz : post.title_en).toLowerCase()
-          const excerpt = (language === "uz" ? post.excerpt_uz : post.excerpt_en).toLowerCase()
+          const title_uz = post.title_uz || ""
+          const title_en = post.title_en || ""
+          const excerpt_uz = post.excerpt_uz || ""
+          const excerpt_en = post.excerpt_en || ""
+
+          const title = (language === "uz" ? title_uz : title_en).toLowerCase()
+          const excerpt = (language === "uz" ? excerpt_uz : excerpt_en).toLowerCase()
           return title.includes(query.toLowerCase()) || excerpt.includes(query.toLowerCase())
         })
         .slice(0, 5)
@@ -298,12 +290,12 @@ export default function HomePage() {
       setSearchResults(
         filtered.map((post) => ({
           id: post.id,
-          title_uz: post.title_uz,
-          title_en: post.title_en,
-          excerpt_uz: post.excerpt_uz,
-          excerpt_en: post.excerpt_en,
-          category_name: post.category_name,
-          category_name_en: post.category_name_en,
+          title_uz: post.title_uz || "",
+          title_en: post.title_en || "",
+          excerpt_uz: post.excerpt_uz || "",
+          excerpt_en: post.excerpt_en || "",
+          category_name: post.category_name || "",
+          category_name_en: post.category_name_en || "",
           views: post.views || 0,
         })),
       )
@@ -312,7 +304,6 @@ export default function HomePage() {
     }
   }
 
-  // Like handler
   const handleLike = async (postId: string, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -329,7 +320,6 @@ export default function HomePage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          // Update local state
           setPosts((prevPosts) =>
             prevPosts.map((post) => (post.id === postId ? { ...post, likes_count: data.data.likes_count } : post)),
           )
@@ -340,7 +330,6 @@ export default function HomePage() {
     }
   }
 
-  // Newsletter subscription
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.trim()) return
@@ -370,98 +359,7 @@ export default function HomePage() {
     }
   }
 
-  // Google Sign-In handler
-  const handleGoogleSignIn = async () => {
-    setGoogleLoading(true)
-    try {
-      // Initialize Google Sign-In
-      if (typeof window !== "undefined" && window.google) {
-        window.google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-          callback: async (response: any) => {
-            try {
-              // Decode JWT token to get user info
-              const payload = JSON.parse(atob(response.credential.split(".")[1]))
-              const userEmail = payload.email
-
-              // Subscribe with Google email
-              const subscribeResponse = await fetch("/api/newsletter/subscribe", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  email: userEmail,
-                  source: "google",
-                }),
-              })
-
-              const data = await subscribeResponse.json()
-              if (data.success) {
-                alert(t("Google orqali muvaffaqiyatli obuna bo'ldingiz!", "Successfully subscribed via Google!"))
-              } else {
-                alert(data.message || t("Xatolik yuz berdi", "An error occurred"))
-              }
-            } catch (error) {
-              console.error("Google subscription error:", error)
-              alert(t("Xatolik yuz berdi", "An error occurred"))
-            } finally {
-              setGoogleLoading(false)
-            }
-          },
-        })
-
-        // Prompt Google Sign-In
-        window.google.accounts.id.prompt()
-      } else {
-        // Fallback: Load Google Identity Services
-        const script = document.createElement("script")
-        script.src = "https://accounts.google.com/gsi/client"
-        script.onload = () => {
-          window.google.accounts.id.initialize({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-            callback: async (response: any) => {
-              try {
-                const payload = JSON.parse(atob(response.credential.split(".")[1]))
-                const userEmail = payload.email
-
-                const subscribeResponse = await fetch("/api/newsletter/subscribe", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    email: userEmail,
-                    source: "google",
-                  }),
-                })
-
-                const data = await subscribeResponse.json()
-                if (data.success) {
-                  alert(t("Google orqali muvaffaqiyatli obuna bo'ldingiz!", "Successfully subscribed via Google!"))
-                } else {
-                  alert(data.message || t("Xatolik yuz berdi", "An error occurred"))
-                }
-              } catch (error) {
-                console.error("Google subscription error:", error)
-                alert(t("Xatolik yuz berdi", "An error occurred"))
-              } finally {
-                setGoogleLoading(false)
-              }
-            },
-          })
-          window.google.accounts.id.prompt()
-        }
-        document.head.appendChild(script)
-      }
-    } catch (error) {
-      console.error("Google Sign-In error:", error)
-      alert(t("Xatolik yuz berdi", "An error occurred"))
-      setGoogleLoading(false)
-    }
-  }
-
-  // 6. Loading check ni eng oxirida qo'ying
+  // Loading check
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-cyan-50 to-green-50 dark:from-gray-900 dark:via-blue-900 dark:to-gray-900">
@@ -479,11 +377,14 @@ export default function HomePage() {
 
   return (
     <div
-      className={`min-h-screen transition-all duration-500 ${darkMode ? "dark bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900" : "bg-gradient-to-br from-blue-50 via-cyan-50 to-green-50"}`}
+      className={`min-h-screen transition-all duration-500 ${
+        darkMode
+          ? "dark bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900"
+          : "bg-gradient-to-br from-blue-50 via-cyan-50 to-green-50"
+      }`}
     >
       {/* Floating Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Gradient Orbs */}
         <motion.div
           animate={{
             x: [0, 100, 0],
@@ -509,7 +410,6 @@ export default function HomePage() {
           className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-full blur-3xl"
         />
 
-        {/* Floating Laptops */}
         <motion.div
           {...floatingAnimation}
           transition={{ ...floatingAnimation.transition, delay: 0 }}
@@ -561,7 +461,7 @@ export default function HomePage() {
               </div>
             </Link>
 
-            {/* Enhanced Desktop Navigation */}
+            {/* Desktop Navigation */}
             <motion.nav
               className="hidden md:flex items-center space-x-2"
               variants={staggerContainer}
@@ -583,10 +483,6 @@ export default function HomePage() {
                         {t("Bosh sahifa", "Home")}
                       </span>
                     </div>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      layoutId="navHover"
-                    />
                   </div>
                 </Link>
               </motion.div>
@@ -606,10 +502,6 @@ export default function HomePage() {
                         {t("Kategoriyalar", "Categories")}
                       </span>
                     </div>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-green-400/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      layoutId="navHover"
-                    />
                   </div>
                 </Link>
               </motion.div>
@@ -629,10 +521,6 @@ export default function HomePage() {
                         {t("Aloqa", "Contact")}
                       </span>
                     </div>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      layoutId="navHover"
-                    />
                   </div>
                 </Link>
               </motion.div>
@@ -640,7 +528,7 @@ export default function HomePage() {
 
             {/* Controls */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              {/* Enhanced Search */}
+              {/* Search */}
               <motion.div
                 className="relative hidden lg:block"
                 variants={searchVariants}
@@ -678,24 +566,10 @@ export default function HomePage() {
                           : "bg-gradient-to-r from-blue-50/80 to-cyan-50/80 dark:from-blue-900/40 dark:to-cyan-900/40 border-blue-200/60 dark:border-blue-700/60 hover:border-blue-300 dark:hover:border-blue-600"
                       }`}
                     />
-
-                    {/* Animated border effect */}
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 opacity-0 -z-10"
-                      animate={{
-                        opacity: searchFocused ? [0, 0.3, 0] : 0,
-                        scale: searchFocused ? [1, 1.05, 1] : 1,
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: searchFocused ? Number.POSITIVE_INFINITY : 0,
-                        ease: "easeInOut",
-                      }}
-                    />
                   </motion.div>
                 </div>
 
-                {/* Enhanced Search Results */}
+                {/* Search Results */}
                 <AnimatePresence>
                   {searchQuery && (
                     <motion.div
@@ -804,7 +678,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Enhanced Mobile Menu */}
+          {/* Mobile Menu */}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
@@ -865,7 +739,6 @@ export default function HomePage() {
                     </Link>
                   </motion.div>
 
-                  {/* Enhanced Mobile Search */}
                   <motion.div variants={navItemVariants} className="pt-4">
                     <div className="relative">
                       <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 w-5 h-5 z-10" />
@@ -1006,13 +879,13 @@ export default function HomePage() {
                         >
                           <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-blue-200 dark:border-blue-700 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:border-blue-400 dark:hover:border-blue-500">
                             <div className="relative">
-                              {/* YouTube Video Preview yoki Featured Image */}
                               {post.youtube_url ? (
                                 <div className="relative">
                                   <YouTubeEmbed
                                     url={post.youtube_url}
-                                    title={language === "uz" ? post.title_uz : post.title_en}
+                                    title={language === "uz" ? post.title_uz || "" : post.title_en || ""}
                                     className="h-52"
+                                    showExternalLink={false}
                                   />
                                   <div className="absolute top-4 left-4">
                                     <Badge className="bg-red-600 text-white shadow-lg backdrop-blur-sm font-semibold flex items-center space-x-1">
@@ -1024,7 +897,7 @@ export default function HomePage() {
                               ) : post.featured_image ? (
                                 <Image
                                   src={post.featured_image || "/placeholder.svg"}
-                                  alt={language === "uz" ? post.title_uz : post.title_en}
+                                  alt={language === "uz" ? post.title_uz || "" : post.title_en || ""}
                                   width={400}
                                   height={250}
                                   className="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -1038,7 +911,7 @@ export default function HomePage() {
                               {!post.youtube_url && (
                                 <div className="absolute top-4 left-4">
                                   <Badge className="bg-white/95 text-blue-800 hover:bg-white shadow-lg backdrop-blur-sm font-semibold">
-                                    {language === "uz" ? post.category_name : post.category_name_en}
+                                    {language === "uz" ? post.category_name || "" : post.category_name_en || ""}
                                   </Badge>
                                 </div>
                               )}
@@ -1076,11 +949,11 @@ export default function HomePage() {
                               </div>
 
                               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                {language === "uz" ? post.title_uz : post.title_en}
+                                {language === "uz" ? post.title_uz || "" : post.title_en || ""}
                               </h3>
 
                               <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 leading-relaxed">
-                                {language === "uz" ? post.excerpt_uz : post.excerpt_en}
+                                {language === "uz" ? post.excerpt_uz || "" : post.excerpt_en || ""}
                               </p>
 
                               {post.tags && post.tags.length > 0 && (
@@ -1093,7 +966,12 @@ export default function HomePage() {
                                         variant="secondary"
                                         className="text-xs bg-gradient-to-r from-blue-100 to-green-100 text-gray-700 dark:from-blue-900 dark:to-green-900 dark:text-gray-300"
                                       >
-                                        #{typeof tag === "object" ? (language === "uz" ? tag.name : tag.name_en) : tag}
+                                        #
+                                        {typeof tag === "object"
+                                          ? language === "uz"
+                                            ? tag.name || ""
+                                            : tag.name_en || ""
+                                          : tag || ""}
                                       </Badge>
                                     ))}
                                 </div>
@@ -1125,7 +1003,9 @@ export default function HomePage() {
                   return (
                     <motion.div key={index} variants={fadeInUp}>
                       <Link
-                        href={`/categories?category=${encodeURIComponent(language === "uz" ? category.name_uz : category.name_en)}`}
+                        href={`/categories?category=${encodeURIComponent(
+                          language === "uz" ? category.name_uz : category.name_en,
+                        )}`}
                       >
                         <motion.div
                           {...scaleOnHover}
@@ -1179,7 +1059,7 @@ export default function HomePage() {
                             </div>
                             <div className="flex-1">
                               <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-2 text-sm">
-                                {language === "uz" ? post.title_uz : post.title_en}
+                                {language === "uz" ? post.title_uz || "" : post.title_en || ""}
                               </h4>
                               <div className="flex items-center space-x-3 mt-2 text-xs text-gray-500">
                                 <span className="flex items-center">
@@ -1233,41 +1113,6 @@ export default function HomePage() {
                           className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-xl rounded-xl py-3"
                         >
                           {subscribing ? t("Yuborilmoqda...", "Subscribing...") : t("Obuna bo'lish", "Subscribe")}
-                        </Button>
-                      </motion.div>
-
-                      {/* Google Sign-In Button */}
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={handleGoogleSignIn}
-                          disabled={googleLoading}
-                          className="w-full border-2 border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-xl py-3 flex items-center justify-center space-x-2 bg-transparent"
-                        >
-                          <svg className="w-5 h-5" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                            />
-                          </svg>
-                          <span>
-                            {googleLoading
-                              ? t("Yuklanmoqda...", "Loading...")
-                              : t("Google bilan obuna", "Subscribe with Google")}
-                          </span>
                         </Button>
                       </motion.div>
                     </form>

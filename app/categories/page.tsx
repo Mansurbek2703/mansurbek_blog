@@ -215,9 +215,17 @@ export default function CategoriesPage() {
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
           setPosts(data.data)
+        } else {
+          console.error("API Error:", data.error)
+          // Fallback: bo'sh array
+          setPosts([])
         }
       })
-      .catch(console.error)
+      .catch((error) => {
+        console.error("Fetch Error:", error)
+        // Fallback: bo'sh array
+        setPosts([])
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -237,20 +245,34 @@ export default function CategoriesPage() {
     return Array.from(map.values())
   }, [posts])
 
-  // Filter posts based on search and category
+  // Filter posts based on search and category - XATO TUZATILDI
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
+      // Category filter
       const matchCategory = selectedCategory
         ? language === "uz"
-          ? post.category_name === selectedCategory
-          : post.category_name_en === selectedCategory
+          ? (post.category_name || "") === selectedCategory
+          : (post.category_name_en || "") === selectedCategory
         : true
 
-      const term = searchQuery.toLowerCase()
-      const title = (language === "uz" ? post.title_uz : post.title_en || "").toLowerCase()
-      const excerpt = (language === "uz" ? post.excerpt_uz : post.excerpt_en || "").toLowerCase()
+      // Search filter
+      if (!searchQuery.trim()) {
+        return matchCategory
+      }
 
-      return matchCategory && (title.includes(term) || excerpt.includes(term))
+      const term = searchQuery.toLowerCase()
+
+      // Null-safe text extraction
+      const titleText = language === "uz" ? post.title_uz || "" : post.title_en || ""
+      const excerptText = language === "uz" ? post.excerpt_uz || "" : post.excerpt_en || ""
+
+      // Safe toLowerCase calls
+      const title = titleText.toLowerCase()
+      const excerpt = excerptText.toLowerCase()
+
+      const matchesSearch = title.includes(term) || excerpt.includes(term)
+
+      return matchCategory && matchesSearch
     })
   }, [posts, selectedCategory, searchQuery, language])
 
@@ -569,6 +591,7 @@ export default function CategoriesPage() {
                               url={post.youtube_url}
                               title={language === "uz" ? post.title_uz : post.title_en}
                               className="h-52"
+                              showExternalLink={false}
                             />
                             <div className="absolute top-4 left-4">
                               <Badge className="bg-red-600 text-white shadow-lg backdrop-blur-sm font-semibold flex items-center space-x-1">
@@ -661,6 +684,7 @@ export default function CategoriesPage() {
                                 url={post.youtube_url}
                                 title={language === "uz" ? post.title_uz : post.title_en}
                                 className="w-full h-full"
+                                showExternalLink={false}
                               />
                               <div className="absolute top-2 left-2">
                                 <Badge className="bg-red-600 text-white shadow-lg backdrop-blur-sm font-semibold flex items-center space-x-1 text-xs">
